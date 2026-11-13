@@ -1,0 +1,19 @@
+AccountCode,AccountName,PLGroup,AccountType,IsControllable,PLSign,SortOrder
+4010,Ricavi vendita prodotti,Ricavi,Revenue,1,1,10
+4020,Ricavi da servizi e assistenza,Ricavi,Revenue,1,1,11
+4090,Sconti e premi a clienti,Ricavi,Revenue,1,1,12
+5010,Acquisto merci,Costo del venduto,COGS,1,-1,20
+5020,Trasporti su acquisti,Costo del venduto,COGS,1,-1,21
+6010,Retribuzioni,Costo del personale,Opex,1,-1,30
+6020,Oneri sociali e TFR,Costo del personale,Opex,1,-1,31
+6110,Provvigioni agenti,Costi commerciali,Opex,1,-1,40
+6120,Trasporti su vendite,Costi commerciali,Opex,1,-1,41
+6130,"Pubblicità, fiere e digital",Costi commerciali,Opex,1,-1,42
+6210,Affitti e spese condominiali,Costi di struttura,Opex,0,-1,50
+6220,Utenze,Costi di struttura,Opex,1,-1,51
+6230,Consulenze e servizi professionali,Costi di struttura,Opex,1,-1,52
+6240,Licenze software e cloud,Costi di struttura,Opex,1,-1,53
+6250,Viaggi e trasferte,Costi di struttura,Opex,1,-1,54
+6260,Auto aziendali (noleggi e carburante),Costi di struttura,Opex,1,-1,55
+6290,Altri costi di gestione,Costi di struttura,Opex,1,-1,56
+7010,Ammortamenti,Ammortamenti,D&A,0,-1,70
