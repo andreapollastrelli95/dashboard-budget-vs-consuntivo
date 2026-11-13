@@ -1,0 +1,64 @@
+table CostCenter
+	lineageTag: 07108de0-c7ba-5e8f-a9ac-c192301613ca
+
+	column CostCenterKey
+		dataType: int64
+		isHidden
+		lineageTag: 1ea182ae-123e-46b8-8d3a-0974748986b8
+		summarizeBy: none
+		sourceColumn: CostCenterKey
+
+	column CostCenterCode
+		dataType: string
+		lineageTag: a51974a2-75a2-4c2c-a448-3bc8cd5bc4ed
+		summarizeBy: none
+		sourceColumn: CostCenterCode
+
+	column CostCenter
+		dataType: string
+		lineageTag: 3cc657ca-5fd1-405a-8983-ed75445f3811
+		summarizeBy: none
+		sourceColumn: CostCenter
+		sortByColumn: CostCenterSort
+
+	column CostCenterName
+		dataType: string
+		lineageTag: 9179b729-f915-42b0-a4ed-dab57335a884
+		summarizeBy: none
+		sourceColumn: CostCenterName
+		sortByColumn: CostCenterSort
+
+	column CostCenterType
+		dataType: string
+		lineageTag: 12ab030c-1bca-4955-84ce-07bb9c6ab029
+		summarizeBy: none
+		sourceColumn: CostCenterType
+
+	column BusinessArea
+		dataType: string
+		lineageTag: bd186b25-c43e-4cde-a93f-72c541de9a8b
+		summarizeBy: none
+		sourceColumn: BusinessArea
+
+	column Manager
+		dataType: string
+		lineageTag: 401fc961-471d-44c9-b54b-a7c68fb58858
+		summarizeBy: none
+		sourceColumn: Manager
+
+	column CostCenterSort
+		dataType: int64
+		lineageTag: 542439be-b531-4abd-bb8a-b3ec22ef81d5
+		summarizeBy: none
+		sourceColumn: CostCenterSort
+
+	partition CostCenter = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Projects\dashboard-budget-vs-consuntivo\data\model\cost_center.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"CostCenterKey", Int64.Type}, {"CostCenterCode", type text}, {"CostCenter", type text}, {"CostCenterName", type text}, {"CostCenterType", type text}, {"BusinessArea", type text}, {"Manager", type text}, {"CostCenterSort", Int64.Type}}, "en-US")
+				in
+				    Typed
+

@@ -1,0 +1,51 @@
+table ManagementComment
+	lineageTag: 8339c4db-7d58-5146-8dae-fb8f9df323b5
+
+	column Year
+		dataType: int64
+		lineageTag: e74a25fb-780d-449f-ba93-871ad92a6389
+		summarizeBy: none
+		sourceColumn: Year
+
+	column Month
+		dataType: int64
+		lineageTag: 641223b7-4371-4292-9c4e-9c838614adb3
+		summarizeBy: none
+		sourceColumn: Month
+
+	column CostCenterKey
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 23576d4b-6733-4abf-b1e6-f1cd576f2b9e
+		summarizeBy: none
+		sourceColumn: CostCenterKey
+
+	column CommentType
+		dataType: string
+		lineageTag: 846b16e5-1367-4125-b787-089ab6ea6a5b
+		summarizeBy: none
+		sourceColumn: CommentType
+
+	column Priority
+		dataType: int64
+		lineageTag: ae2de52d-de5d-4167-831a-1bde11bc3ff0
+		summarizeBy: none
+		sourceColumn: Priority
+
+	column CommentText
+		dataType: string
+		lineageTag: 42fd85b9-bd6d-4a1f-8099-115066bac8b9
+		summarizeBy: none
+		sourceColumn: CommentText
+
+	partition ManagementComment = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Projects\dashboard-budget-vs-consuntivo\data\model\management_comment.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"Year", Int64.Type}, {"Month", Int64.Type}, {"CostCenterKey", type number}, {"CommentType", type text}, {"Priority", Int64.Type}, {"CommentText", type text}}, "en-US")
+				in
+				    Typed
+

@@ -1,0 +1,40 @@
+relationship r1
+	fromColumn: FactActual.DateKey
+	toColumn: Calendar.DateKey
+
+relationship r2
+	fromColumn: FactActual.CostCenterKey
+	toColumn: CostCenter.CostCenterKey
+
+relationship r3
+	fromColumn: FactActual.AccountKey
+	toColumn: Account.AccountKey
+
+relationship r4
+	fromColumn: FactPlan.DateKey
+	toColumn: Calendar.DateKey
+
+relationship r5
+	fromColumn: FactPlan.CostCenterKey
+	toColumn: CostCenter.CostCenterKey
+
+relationship r6
+	fromColumn: FactPlan.AccountKey
+	toColumn: Account.AccountKey
+
+relationship r7
+	fromColumn: FactPlan.ScenarioKey
+	toColumn: Scenario.ScenarioKey
+
+relationship r8
+	fromColumn: FactHeadcount.DateKey
+	toColumn: Calendar.DateKey
+
+relationship r9
+	fromColumn: FactHeadcount.CostCenterKey
+	toColumn: CostCenter.CostCenterKey
+
+relationship r10
+	fromColumn: FactHeadcount.ScenarioKey
+	toColumn: Scenario.ScenarioKey
+

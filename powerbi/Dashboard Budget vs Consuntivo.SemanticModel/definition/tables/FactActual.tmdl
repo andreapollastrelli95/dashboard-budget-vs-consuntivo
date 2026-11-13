@@ -1,0 +1,499 @@
+table FactActual
+	lineageTag: b5813d78-4048-5e5b-918c-cf428715f4f2
+
+	measure Actual = SUM ( FactActual[Amount] )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: 9f5d8a73-93c9-4e53-818f-e979b5b2b6b0
+
+	measure Budget = CALCULATE ( SUM ( FactPlan[Amount] ), Scenario[ScenarioName] = "Budget" )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: e03fd250-f89b-4ef5-92ae-b758df553e7e
+
+	measure Forecast = CALCULATE ( SUM ( FactPlan[Amount] ), Scenario[ScenarioName] = "Forecast" )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: 9a8cf2b9-c03b-47db-ae79-88763eea9667
+
+	measure 'Actual Signed' = SUM ( FactActual[SignedAmount] )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: 85a53d25-88e9-4b89-93a5-8181ebe8a4c9
+
+	measure 'Budget Signed' = CALCULATE ( SUM ( FactPlan[SignedAmount] ), Scenario[ScenarioName] = "Budget" )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: d8dfea3f-8c15-49c4-858a-e30dbd008749
+
+	measure 'Forecast Signed' = CALCULATE ( SUM ( FactPlan[SignedAmount] ), Scenario[ScenarioName] = "Forecast" )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: 799e5993-f2a9-4cf4-ad04-6822903e316c
+
+	measure 'Last Actual DateKey' = CALCULATE ( MAX ( FactActual[DateKey] ), REMOVEFILTERS () )
+		formatString: #,0
+		displayFolder: 01 Base
+		lineageTag: ce1dc9f6-339b-4e92-afa8-7ef18a0d33f6
+
+	measure 'Actual Revenue' = CALCULATE ( [Actual], Account[AccountType] = "Revenue" )
+		formatString: #,0
+		displayFolder: 02 Ricavi e costi
+		lineageTag: f05fb130-be79-4d9a-bd2c-23ecbd56dcc9
+
+	measure 'Budget Revenue' = CALCULATE ( [Budget], Account[AccountType] = "Revenue" )
+		formatString: #,0
+		displayFolder: 02 Ricavi e costi
+		lineageTag: d8ea7bb6-bfa3-4d99-ba93-f640facebb03
+
+	measure 'Forecast Revenue' = CALCULATE ( [Forecast], Account[AccountType] = "Revenue" )
+		formatString: #,0
+		displayFolder: 02 Ricavi e costi
+		lineageTag: bcb4e30f-1532-4727-84f0-25bbf644fa5f
+
+	measure 'Actual Cost' = CALCULATE ( [Actual], Account[PLSign] = -1 )
+		formatString: #,0
+		displayFolder: 02 Ricavi e costi
+		lineageTag: 7f2f6e1a-061d-4eeb-b3b9-f5a732cba43c
+
+	measure 'Budget Cost' = CALCULATE ( [Budget], Account[PLSign] = -1 )
+		formatString: #,0
+		displayFolder: 02 Ricavi e costi
+		lineageTag: a7f9d057-adc9-4e52-ac96-1031c6ab7044
+
+	measure 'Actual Opex' = CALCULATE ( [Actual], Account[AccountType] = "Opex" )
+		formatString: #,0
+		displayFolder: 02 Ricavi e costi
+		lineageTag: 5ee97ec2-3199-4055-950b-62a9a04bc80d
+
+	measure 'Budget Opex' = CALCULATE ( [Budget], Account[AccountType] = "Opex" )
+		formatString: #,0
+		displayFolder: 02 Ricavi e costi
+		lineageTag: 8c3c531c-48d0-4bdd-8c48-4a7baa75da5a
+
+	measure 'Actual Revenue PY' = CALCULATE ( [Actual Revenue], SAMEPERIODLASTYEAR ( 'Calendar'[Date] ) )
+		formatString: #,0
+		displayFolder: 02 Ricavi e costi
+		lineageTag: 488c26dd-19fd-4dde-8a1f-feae37b6542d
+
+	measure 'Variance €' = [Actual] - [Budget]
+		formatString: #,0
+		displayFolder: 03 Scostamenti
+		lineageTag: 1e272b46-a279-418b-96ff-dc972e6f7101
+
+	measure 'Variance %' = DIVIDE ( [Variance €], ABS ( [Budget] ) )
+		formatString: 0.0%
+		displayFolder: 03 Scostamenti
+		lineageTag: 830db8ef-aecf-4726-886b-d21affb3625e
+
+	measure 'Variance Fav €' =
+			SUMX (
+			    VALUES ( Account[PLSign] ),
+			    ( [Actual] - [Budget] ) * Account[PLSign]
+			)
+		formatString: #,0
+		displayFolder: 03 Scostamenti
+		lineageTag: 9ab2a8cd-5677-4481-98a0-14010d82e669
+
+	measure 'Variance Fav %' = DIVIDE ( [Variance Fav €], ABS ( [Budget Signed] ) )
+		formatString: 0.0%
+		displayFolder: 03 Scostamenti
+		lineageTag: c1cef3c6-2787-4064-ad0e-9a003b861a2b
+
+	measure 'Revenue Variance €' = [Actual Revenue] - [Budget Revenue]
+		formatString: #,0
+		displayFolder: 03 Scostamenti
+		lineageTag: f7efb41f-e3fe-4d12-8cca-e484d9948be5
+
+	measure 'Revenue Variance %' = DIVIDE ( [Revenue Variance €], [Budget Revenue] )
+		formatString: 0.0%
+		displayFolder: 03 Scostamenti
+		lineageTag: 6310a44a-9e5c-4c78-bc33-c1b5773cffd8
+
+	measure 'Cost Variance €' = [Actual Cost] - [Budget Cost]
+		formatString: #,0
+		displayFolder: 03 Scostamenti
+		lineageTag: bc490a6a-dae1-446c-89c5-2f1e9a5f8c28
+
+	measure 'Cost Variance %' = DIVIDE ( [Cost Variance €], [Budget Cost] )
+		formatString: 0.0%
+		displayFolder: 03 Scostamenti
+		lineageTag: 5b904fcc-b081-4195-8310-53dbb669803d
+
+	measure 'Variance vs Forecast €' = SUMX ( VALUES ( Account[PLSign] ), ( [Actual] - [Forecast] ) * Account[PLSign] )
+		formatString: #,0
+		displayFolder: 03 Scostamenti
+		lineageTag: ec742601-7a7e-45f6-a6d8-84bb10b53baf
+
+	measure 'Variance Status' =
+			VAR _v = [Variance Fav %]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( [Budget] ) && NOT ISBLANK ( [Actual] ), "Non a budget",
+			        _v >= 0, "Favorevole",
+			        _v >= -0.05, "Attenzione",
+			        "Sfavorevole"
+			    )
+		displayFolder: 03 Scostamenti
+		lineageTag: a18e135f-80de-4083-b4fd-3d07222640ed
+
+	measure 'Variance Color' =
+			VAR _v = [Variance Fav %]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( _v ), "#8A94A6",
+			        _v >= 0, "#1E8E5A",
+			        _v >= -0.05, "#E0A100",
+			        "#C0392B"
+			    )
+		displayFolder: 03 Scostamenti
+		lineageTag: b84c42b9-3569-4517-8f20-3afd3fff45b2
+
+	measure 'Actual Gross Margin' = CALCULATE ( [Actual Signed], Account[AccountType] IN { "Revenue", "COGS" } )
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: 1bcbfc0f-5ab7-4dab-8fb4-296765b45f9c
+
+	measure 'Budget Gross Margin' = CALCULATE ( [Budget Signed], Account[AccountType] IN { "Revenue", "COGS" } )
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: bc23812a-c4e6-424e-a32f-2b9c1e640b36
+
+	measure 'Actual Gross Margin %' = DIVIDE ( [Actual Gross Margin], [Actual Revenue] )
+		formatString: 0.0%
+		displayFolder: 04 Margini
+		lineageTag: 9999ceca-df37-43d2-9300-b2ee02b7fb7e
+
+	measure 'Budget Gross Margin %' = DIVIDE ( [Budget Gross Margin], [Budget Revenue] )
+		formatString: 0.0%
+		displayFolder: 04 Margini
+		lineageTag: 26e18ae2-44ba-4554-8762-64567dc8f3c8
+
+	measure 'Gross Margin % Delta pp' = ( [Actual Gross Margin %] - [Budget Gross Margin %] ) * 100
+		formatString: #,0.0
+		displayFolder: 04 Margini
+		lineageTag: 3905072a-2f0a-480e-b6b1-df8bb1a29bab
+
+	measure 'Actual EBITDA' = CALCULATE ( [Actual Signed], Account[AccountType] <> "D&A" )
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: 684a6c82-39d7-4a38-b6a4-0c730fa6c5a1
+
+	measure 'Budget EBITDA' = CALCULATE ( [Budget Signed], Account[AccountType] <> "D&A" )
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: 74a01bd0-92fb-4d29-a1a9-a4a1f94078ea
+
+	measure 'Actual Operating Margin' = [Actual Signed]
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: 249d246b-2b0d-4d2f-8f5e-25110f00c770
+
+	measure 'Budget Operating Margin' = [Budget Signed]
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: 856e112e-15c2-4ea2-856d-5f4bace8decc
+
+	measure 'Forecast Operating Margin' = [Forecast Signed]
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: 679b8b94-e7d6-43d9-b849-e5f14d68d792
+
+	measure 'Operating Margin Variance €' = [Actual Operating Margin] - [Budget Operating Margin]
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: ca1ca064-8687-4f58-8e37-c24fabe3c65f
+
+	measure 'Operating Margin Variance %' = DIVIDE ( [Operating Margin Variance €], ABS ( [Budget Operating Margin] ) )
+		formatString: 0.0%
+		displayFolder: 04 Margini
+		lineageTag: 2e3b2935-bee2-4735-98e3-8c152c30723a
+
+	measure 'Actual Operating Margin %' = DIVIDE ( [Actual Operating Margin], [Actual Revenue] )
+		formatString: 0.0%
+		displayFolder: 04 Margini
+		lineageTag: a29eda24-9480-454a-90b0-64416e628ce2
+
+	measure 'Budget Operating Margin %' = DIVIDE ( [Budget Operating Margin], [Budget Revenue] )
+		formatString: 0.0%
+		displayFolder: 04 Margini
+		lineageTag: 689c326c-1fdc-4c31-9216-e51b8df2793d
+
+	measure 'Operating Margin YTD Actual' = CALCULATE ( [Actual Operating Margin], DATESYTD ( 'Calendar'[Date] ) )
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: 54bda8d6-5050-430c-b176-0e4de7067434
+
+	measure 'Operating Margin YTD Budget' =
+			VAR _LastClosed = [Last Actual DateKey]
+			RETURN
+			    CALCULATE (
+			        [Budget Operating Margin],
+			        DATESYTD ( 'Calendar'[Date] ),
+			        'Calendar'[DateKey] <= _LastClosed
+			    )
+		formatString: #,0
+		displayFolder: 04 Margini
+		lineageTag: 48abda38-ada4-49b5-9d4d-42c012d34423
+
+	measure 'Cost Center Result Actual' = [Actual Signed]
+		formatString: #,0
+		displayFolder: 05 Centri di costo
+		lineageTag: 36f32192-b802-479f-bd8a-83af03eb9d17
+
+	measure 'Cost Center Result Budget' = [Budget Signed]
+		formatString: #,0
+		displayFolder: 05 Centri di costo
+		lineageTag: 82fb29e8-1d52-4521-a47e-5f253f8227c6
+
+	measure 'Cost Center Performance €' = [Variance Fav €]
+		formatString: #,0
+		displayFolder: 05 Centri di costo
+		lineageTag: 23d6ef87-dcdc-47ee-804c-981b36f15a8c
+
+	measure 'Cost Center Performance %' = DIVIDE ( [Variance Fav €], ABS ( [Cost Center Result Budget] ) )
+		formatString: 0.0%
+		displayFolder: 05 Centri di costo
+		lineageTag: d1993781-eb7e-4bc1-8d8a-a64ad411cb7a
+
+	measure 'Budget Consumed %' = DIVIDE ( [Actual Cost], [Budget Cost] )
+		formatString: 0.0%
+		displayFolder: 05 Centri di costo
+		lineageTag: 186d6868-e32f-4a58-891e-1724bdc9fc2e
+
+	measure 'Budget Consumed Full Year %' =
+			DIVIDE (
+			    [Actual Cost],
+			    CALCULATE ( [Budget Cost], DATESYTD ( ENDOFYEAR ( 'Calendar'[Date] ) ) )
+			)
+		formatString: 0.0%
+		displayFolder: 05 Centri di costo
+		lineageTag: 460a38f5-02f9-4bf5-a7b0-5672959dd219
+
+	measure 'Controllable Variance €' = CALCULATE ( [Variance Fav €], Account[IsControllable] = TRUE () )
+		formatString: #,0
+		displayFolder: 05 Centri di costo
+		lineageTag: 572b5cda-0bbc-4c98-bbfe-99d4e6f99594
+
+	measure 'Cost Center Rank' =
+			IF (
+			    HASONEVALUE ( CostCenter[CostCenterName] ),
+			    RANKX ( ALLSELECTED ( CostCenter[CostCenterName] ), [Cost Center Performance %], , ASC, DENSE )
+			)
+		formatString: #,0
+		displayFolder: 05 Centri di costo
+		lineageTag: 47d27b97-7c46-49a2-bac3-7dd62ca3a74f
+
+	measure 'Cost Centers Over Budget' =
+			COUNTROWS (
+			    FILTER ( VALUES ( CostCenter[CostCenterName] ), [Cost Center Performance %] < -0.05 )
+			)
+		formatString: #,0
+		displayFolder: 05 Centri di costo
+		lineageTag: 1d81d03c-10de-448a-9c6d-45fe54e160cb
+
+	measure 'FTE Actual' =
+			AVERAGEX (
+			    VALUES ( 'Calendar'[YearMonth] ),
+			    CALCULATE ( SUM ( FactHeadcount[FTE] ), Scenario[ScenarioName] = "Actual" )
+			)
+		formatString: #,0.0
+		displayFolder: 06 Organico
+		lineageTag: 821361cc-4e2c-4991-87c9-eb94c173d26b
+
+	measure 'FTE Budget' =
+			AVERAGEX (
+			    VALUES ( 'Calendar'[YearMonth] ),
+			    CALCULATE ( SUM ( FactHeadcount[FTE] ), Scenario[ScenarioName] = "Budget" )
+			)
+		formatString: #,0.0
+		displayFolder: 06 Organico
+		lineageTag: c606bdc4-2f98-4fd1-89c7-1d57c0ff215a
+
+	measure 'FTE Variance' = [FTE Actual] - [FTE Budget]
+		formatString: #,0.0
+		displayFolder: 06 Organico
+		lineageTag: 51eb6a08-37d1-4acd-a7ef-2d6191834469
+
+	measure 'Personnel Cost Actual' = CALCULATE ( [Actual], Account[PLGroup] = "Costo del personale" )
+		formatString: #,0
+		displayFolder: 06 Organico
+		lineageTag: aae71ec2-3d9f-40b9-92b0-9d119a505cf9
+
+	measure 'Personnel Cost Budget' = CALCULATE ( [Budget], Account[PLGroup] = "Costo del personale" )
+		formatString: #,0
+		displayFolder: 06 Organico
+		lineageTag: c97ce8cf-3a75-4646-8fa5-ca4eadbf49d8
+
+	measure 'Cost per FTE Actual' = DIVIDE ( [Personnel Cost Actual], [FTE Actual] ) * DIVIDE ( 12, DISTINCTCOUNT ( 'Calendar'[YearMonth] ) )
+		formatString: #,0.0
+		displayFolder: 06 Organico
+		lineageTag: ef563ee7-c2a2-4439-8f0a-47951b7203e8
+
+	measure 'Full Year Budget' = CALCULATE ( [Budget Signed], DATESYTD ( ENDOFYEAR ( 'Calendar'[Date] ) ) )
+		formatString: #,0
+		displayFolder: 07 Forecast
+		lineageTag: 1fccda67-5743-41b6-b0ea-f0859bb5c3b9
+
+	measure 'Full Year Forecast' = CALCULATE ( [Forecast Signed], DATESYTD ( ENDOFYEAR ( 'Calendar'[Date] ) ) )
+		formatString: #,0
+		displayFolder: 07 Forecast
+		lineageTag: d6ccc7b3-0760-4de5-aab7-f57736fb44c1
+
+	measure 'Full Year Landing vs Budget €' = [Full Year Forecast] - [Full Year Budget]
+		formatString: #,0
+		displayFolder: 07 Forecast
+		lineageTag: 522e6098-9d82-4185-bc39-bbe761f8c8a6
+
+	measure 'Forecast Accuracy %' = 1 - ABS ( DIVIDE ( [Actual Signed] - [Forecast Signed], [Forecast Signed] ) )
+		formatString: 0.0%
+		displayFolder: 07 Forecast
+		lineageTag: fa3669f3-0b73-41b2-be97-324887cd02bb
+
+	measure 'Actual + Forecast Remaining' =
+			VAR _LastClosed = [Last Actual DateKey]
+			RETURN
+			    CALCULATE ( [Actual Signed], 'Calendar'[DateKey] <= _LastClosed )
+			        + CALCULATE ( [Forecast Signed], 'Calendar'[DateKey] > _LastClosed )
+		formatString: #,0
+		displayFolder: 07 Forecast
+		lineageTag: b79af6d0-96c2-4a8c-87c0-abc98af507ba
+
+	measure 'Management Comment Summary' =
+			VAR _Y = MAX ( 'Calendar'[Year] )
+			VAR _M = MAX ( 'Calendar'[Month] )
+			RETURN
+			    CALCULATE (
+			        CONCATENATEX (
+			            ManagementComment,
+			            ManagementComment[CommentText],
+			            UNICHAR ( 10 ) & UNICHAR ( 10 ),
+			            ManagementComment[Priority], ASC
+			        ),
+			        ManagementComment[Year] = _Y,
+			        ManagementComment[Month] = _M,
+			        ManagementComment[CommentType] IN { "Sintesi", "Scostamento negativo", "Scostamento positivo", "Forecast" }
+			    )
+		displayFolder: 08 Commenti
+		lineageTag: db0da972-252f-4cac-80ee-657740bfba43
+
+	measure 'Management Comment Cost Center' =
+			VAR _Y = MAX ( 'Calendar'[Year] )
+			VAR _M = MAX ( 'Calendar'[Month] )
+			VAR _CC = SELECTEDVALUE ( CostCenter[CostCenterKey] )
+			RETURN
+			    CALCULATE (
+			        CONCATENATEX ( ManagementComment, ManagementComment[CommentText], UNICHAR ( 10 ) ),
+			        ManagementComment[Year] = _Y,
+			        ManagementComment[Month] = _M,
+			        ManagementComment[CostCenterKey] = _CC
+			    )
+		displayFolder: 08 Commenti
+		lineageTag: 3b0c4576-82ed-44dd-8a03-5662d5f7023e
+
+	measure 'Dynamic Commentary' =
+			VAR _Rev   = [Actual Revenue]
+			VAR _RevV  = [Revenue Variance %]
+			VAR _OM    = [Actual Operating Margin]
+			VAR _OMB   = [Budget Operating Margin]
+			VAR _GMpp  = [Gross Margin % Delta pp]
+			VAR _Worst =
+			    TOPN ( 1, VALUES ( CostCenter[CostCenterName] ), [Variance Fav €], ASC )
+			VAR _WorstName = MAXX ( _Worst, CostCenter[CostCenterName] )
+			VAR _WorstVar  = MINX ( _Worst, [Variance Fav €] )
+			VAR _Best =
+			    TOPN ( 1, VALUES ( CostCenter[CostCenterName] ), [Variance Fav €], DESC )
+			VAR _BestName = MAXX ( _Best, CostCenter[CostCenterName] )
+			VAR _BestVar  = MAXX ( _Best, [Variance Fav €] )
+			RETURN
+			    "Ricavi € " & FORMAT ( _Rev, "#,0" ) & " ("
+			        & FORMAT ( _RevV, "+0.0%;-0.0%" ) & " vs budget), margine lordo "
+			        & FORMAT ( _GMpp, "+0.0;-0.0" ) & " pp. "
+			        & "Risultato operativo € " & FORMAT ( _OM, "#,0" ) & " contro € " & FORMAT ( _OMB, "#,0" )
+			        & " a budget. "
+			        & "Scostamento peggiore: " & _WorstName & " (€ " & FORMAT ( _WorstVar, "#,0" ) & "); "
+			        & "migliore: " & _BestName & " (€ " & FORMAT ( _BestVar, "+#,0" ) & ")."
+		displayFolder: 08 Commenti
+		lineageTag: cca26fba-b28a-4f3c-a8b0-d209a63f1221
+
+	measure 'Selected Period' = "Gen - " & FORMAT ( MAX ( 'Calendar'[Date] ), "mmm yyyy" )
+		displayFolder: 09 UI
+		lineageTag: 97ab72e1-7a4e-49a2-babd-6b0cfffbd467
+
+	measure 'Variance Arrow' =
+			VAR _v = [Variance Fav €]
+			RETURN IF ( ISBLANK ( _v ), BLANK (), IF ( _v >= 0, "▲", "▼" ) )
+		displayFolder: 09 UI
+		lineageTag: e6670490-596b-444d-9075-2e0ec540fba8
+
+	column DateKey
+		dataType: int64
+		isHidden
+		lineageTag: bdc2df53-f7ef-47a8-878a-e93679e8ef41
+		summarizeBy: none
+		sourceColumn: DateKey
+
+	column CostCenterKey
+		dataType: int64
+		isHidden
+		lineageTag: 66d51315-5c96-4165-b6a3-7a120e7ecc78
+		summarizeBy: none
+		sourceColumn: CostCenterKey
+
+	column AccountKey
+		dataType: int64
+		isHidden
+		lineageTag: aeba41de-681f-413e-a457-c0f257880297
+		summarizeBy: none
+		sourceColumn: AccountKey
+
+	column DocumentNumber
+		dataType: string
+		lineageTag: aea0b91b-8216-4efd-b258-76cea71cb919
+		summarizeBy: none
+		sourceColumn: DocumentNumber
+
+	column Amount
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 8007abf1-4f72-494c-9085-b42918978148
+		summarizeBy: sum
+		sourceColumn: Amount
+
+	column SignedAmount
+		dataType: double
+		formatString: #,0.00
+		lineageTag: de0bd37f-77c6-4a39-8ada-010f3adff560
+		summarizeBy: sum
+		sourceColumn: SignedAmount
+
+	column Description
+		dataType: string
+		lineageTag: 15977e31-d735-43e6-8618-939cb8545478
+		summarizeBy: none
+		sourceColumn: Description
+
+	column Counterparty
+		dataType: string
+		lineageTag: 4a3f9017-88b0-454c-a035-7cea4f590049
+		summarizeBy: none
+		sourceColumn: Counterparty
+
+	column EntryType
+		dataType: string
+		lineageTag: 683e1d1c-3493-4539-950b-ff73cd4afca8
+		summarizeBy: none
+		sourceColumn: EntryType
+
+	partition FactActual = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Projects\dashboard-budget-vs-consuntivo\data\model\fact_actual.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"DateKey", Int64.Type}, {"CostCenterKey", Int64.Type}, {"AccountKey", Int64.Type}, {"DocumentNumber", type text}, {"Amount", type number}, {"SignedAmount", type number}, {"Description", type text}, {"Counterparty", type text}, {"EntryType", type text}}, "en-US")
+				in
+				    Typed
+

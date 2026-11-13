@@ -1,0 +1,55 @@
+table FactPlan
+	lineageTag: 6697df7b-0a70-54e6-b1f6-2c56a51f44a7
+
+	column DateKey
+		dataType: int64
+		isHidden
+		lineageTag: 593df410-7751-4f74-b9a3-a3ec750dcf90
+		summarizeBy: none
+		sourceColumn: DateKey
+
+	column CostCenterKey
+		dataType: int64
+		isHidden
+		lineageTag: 36cbe425-fd17-46fd-a430-34e4e8ba783b
+		summarizeBy: none
+		sourceColumn: CostCenterKey
+
+	column AccountKey
+		dataType: int64
+		isHidden
+		lineageTag: 4c112f98-9b48-4fef-8935-eaa04ab5adba
+		summarizeBy: none
+		sourceColumn: AccountKey
+
+	column ScenarioKey
+		dataType: int64
+		isHidden
+		lineageTag: 4db13efb-2724-48af-b324-5367c4d84212
+		summarizeBy: none
+		sourceColumn: ScenarioKey
+
+	column Amount
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 0f7ac809-f764-456d-9ef3-394b610a4435
+		summarizeBy: sum
+		sourceColumn: Amount
+
+	column SignedAmount
+		dataType: double
+		formatString: #,0.00
+		lineageTag: ad729e95-c3fb-46cf-85a4-7ef895601734
+		summarizeBy: sum
+		sourceColumn: SignedAmount
+
+	partition FactPlan = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Projects\dashboard-budget-vs-consuntivo\data\model\fact_plan.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"DateKey", Int64.Type}, {"CostCenterKey", Int64.Type}, {"AccountKey", Int64.Type}, {"ScenarioKey", Int64.Type}, {"Amount", type number}, {"SignedAmount", type number}}, "en-US")
+				in
+				    Typed
+

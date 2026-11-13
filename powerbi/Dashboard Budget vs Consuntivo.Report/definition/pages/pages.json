@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.1.0/schema.json",
+  "pageOrder": [
+    "b1sintesi00000000001",
+    "b2contoeco00000000002",
+    "b3centri00000000000003",
+    "b4dettaglio000000000004",
+    "b5organico00000000000005"
+  ],
+  "activePageName": "b5organico00000000000005"
+}

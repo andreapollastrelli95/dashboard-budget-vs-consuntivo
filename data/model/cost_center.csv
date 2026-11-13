@@ -1,0 +1,14 @@
+CostCenterKey,CostCenterCode,CostCenter,CostCenterName,CostCenterType,BusinessArea,Manager,CostCenterSort
+1,PC10,PC10 - Vendite Nord-Ovest,Vendite Nord-Ovest,Centro di ricavo,Commerciale,L. Ferraris,110
+2,PC20,PC20 - Vendite Nord-Est,Vendite Nord-Est,Centro di ricavo,Commerciale,M. Zanella,120
+3,PC30,PC30 - Vendite Centro,Vendite Centro,Centro di ricavo,Commerciale,S. Marini,130
+4,PC40,PC40 - Vendite Sud e Isole,Vendite Sud e Isole,Centro di ricavo,Commerciale,A. Esposito,140
+5,PC50,PC50 - Key Account / Grandi clienti,Key Account / Grandi clienti,Centro di ricavo,Commerciale,F. Colombo,150
+6,PC60,PC60 - E-commerce,E-commerce,Centro di ricavo,Commerciale,G. Riva,160
+7,CC10,CC10 - Marketing,Marketing,Centro di costo,Commerciale,E. Bassi,210
+8,CC20,CC20 - Logistica e magazzino,Logistica e magazzino,Centro di costo,Operations,R. Pellegrini,220
+9,CC30,CC30 - Assistenza tecnica,Assistenza tecnica,Centro di costo,Operations,D. Fontana,230
+10,CC40,CC40 - Amministrazione e finanza,Amministrazione e finanza,Centro di costo,Struttura,C. Gallo,240
+11,CC50,CC50 - IT e sistemi,IT e sistemi,Centro di costo,Struttura,P. Testa,250
+12,CC60,CC60 - Risorse umane,Risorse umane,Centro di costo,Struttura,V. Longo,260
+13,CC70,CC70 - Direzione generale,Direzione generale,Centro di costo,Struttura,A. Martini,270

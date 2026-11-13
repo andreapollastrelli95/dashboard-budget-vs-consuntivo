@@ -1,0 +1,32 @@
+table Scenario
+	lineageTag: cb4fca9f-23af-59d9-9a37-2d471259817b
+
+	column ScenarioKey
+		dataType: int64
+		isHidden
+		lineageTag: 41e3e563-e39d-4ed5-a3d8-a4357bee6cde
+		summarizeBy: none
+		sourceColumn: ScenarioKey
+
+	column ScenarioName
+		dataType: string
+		lineageTag: 54930322-a310-4e92-aafb-1bc9489268f8
+		summarizeBy: none
+		sourceColumn: ScenarioName
+
+	column ScenarioDesc
+		dataType: string
+		lineageTag: a289f3a0-0072-40d3-ac42-78ead35f1aa6
+		summarizeBy: none
+		sourceColumn: ScenarioDesc
+
+	partition Scenario = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Projects\dashboard-budget-vs-consuntivo\data\model\scenario.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"ScenarioKey", Int64.Type}, {"ScenarioName", type text}, {"ScenarioDesc", type text}}, "en-US")
+				in
+				    Typed
+

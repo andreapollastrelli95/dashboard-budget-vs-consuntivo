@@ -1,0 +1,189 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "a029aab736b94ec0bfdb",
+  "position": {
+    "x": 20,
+    "y": 232,
+    "z": 0,
+    "height": 472,
+    "width": 760,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CostCenter"
+                    }
+                  },
+                  "Property": "CostCenterName"
+                }
+              },
+              "queryRef": "CostCenter.CostCenterName",
+              "nativeQueryRef": "CostCenterName"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CostCenter"
+                    }
+                  },
+                  "Property": "Manager"
+                }
+              },
+              "queryRef": "CostCenter.Manager",
+              "nativeQueryRef": "Manager"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactActual"
+                    }
+                  },
+                  "Property": "Cost Center Result Actual"
+                }
+              },
+              "queryRef": "FactActual.Cost Center Result Actual",
+              "nativeQueryRef": "Cost Center Result Actual"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactActual"
+                    }
+                  },
+                  "Property": "Cost Center Result Budget"
+                }
+              },
+              "queryRef": "FactActual.Cost Center Result Budget",
+              "nativeQueryRef": "Cost Center Result Budget"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactActual"
+                    }
+                  },
+                  "Property": "Cost Center Performance €"
+                }
+              },
+              "queryRef": "FactActual.Cost Center Performance €",
+              "nativeQueryRef": "Cost Center Performance €"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactActual"
+                    }
+                  },
+                  "Property": "Cost Center Performance %"
+                }
+              },
+              "queryRef": "FactActual.Cost Center Performance %",
+              "nativeQueryRef": "Cost Center Performance %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactActual"
+                    }
+                  },
+                  "Property": "Budget Consumed %"
+                }
+              },
+              "queryRef": "FactActual.Budget Consumed %",
+              "nativeQueryRef": "Budget Consumed %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactActual"
+                    }
+                  },
+                  "Property": "Variance Status"
+                }
+              },
+              "queryRef": "FactActual.Variance Status",
+              "nativeQueryRef": "Variance Status"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "FactActual"
+                  }
+                },
+                "Property": "Cost Center Performance €"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Performance per centro'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

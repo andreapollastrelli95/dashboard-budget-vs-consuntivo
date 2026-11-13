@@ -1,0 +1,26 @@
+model Model
+	culture: it-IT
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: it-IT
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["Calendar","CostCenter","Account","Scenario","FactActual","FactPlan","FactHeadcount","ManagementComment"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Calendar
+ref table CostCenter
+ref table Account
+ref table Scenario
+ref table FactActual
+ref table FactPlan
+ref table FactHeadcount
+ref table ManagementComment
+
+ref cultureInfo it-IT
+

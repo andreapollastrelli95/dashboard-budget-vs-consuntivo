@@ -1,0 +1,77 @@
+table Account
+	lineageTag: b0703d62-ecd7-569d-a51b-cc3ce99096de
+
+	column AccountKey
+		dataType: int64
+		isHidden
+		lineageTag: 1cd10205-4fa8-4482-b7bf-e3e506e18846
+		summarizeBy: none
+		sourceColumn: AccountKey
+
+	column AccountCode
+		dataType: int64
+		lineageTag: ddcc239a-53ff-429d-bd36-550b3fade9db
+		summarizeBy: none
+		sourceColumn: AccountCode
+
+	column Account
+		dataType: string
+		lineageTag: ace82a1a-6385-4459-a374-7cfc7b25ffc2
+		summarizeBy: none
+		sourceColumn: Account
+		sortByColumn: SortOrder
+
+	column AccountName
+		dataType: string
+		lineageTag: 88dec52d-4d2a-466a-8e52-b9cc951287d1
+		summarizeBy: none
+		sourceColumn: AccountName
+		sortByColumn: SortOrder
+
+	column PLGroup
+		dataType: string
+		lineageTag: e7dc83cd-8278-4ed0-8738-88847b15d612
+		summarizeBy: none
+		sourceColumn: PLGroup
+		sortByColumn: PLGroupSort
+
+	column AccountType
+		dataType: string
+		lineageTag: a90ea366-cc4d-460a-8ed6-4e946f5d0bc4
+		summarizeBy: none
+		sourceColumn: AccountType
+
+	column IsControllable
+		dataType: boolean
+		lineageTag: accc02d6-8432-42a3-b75e-da720713b7d2
+		summarizeBy: none
+		sourceColumn: IsControllable
+
+	column PLSign
+		dataType: int64
+		lineageTag: 53066500-1d64-43f4-97db-5b77d131f12b
+		summarizeBy: none
+		sourceColumn: PLSign
+
+	column SortOrder
+		dataType: int64
+		lineageTag: b78d3347-090f-49fe-a29a-2c72ef4d52a6
+		summarizeBy: none
+		sourceColumn: SortOrder
+
+	column PLGroupSort
+		dataType: int64
+		lineageTag: ac9f029a-49ee-45cf-956c-8a28a8320e71
+		summarizeBy: none
+		sourceColumn: PLGroupSort
+
+	partition Account = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Projects\dashboard-budget-vs-consuntivo\data\model\account.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"AccountKey", Int64.Type}, {"AccountCode", Int64.Type}, {"Account", type text}, {"AccountName", type text}, {"PLGroup", type text}, {"AccountType", type text}, {"IsControllable", type logical}, {"PLSign", Int64.Type}, {"SortOrder", Int64.Type}, {"PLGroupSort", Int64.Type}}, "en-US")
+				in
+				    Typed
+

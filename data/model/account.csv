@@ -1,0 +1,19 @@
+AccountKey,AccountCode,Account,AccountName,PLGroup,AccountType,IsControllable,PLSign,SortOrder,PLGroupSort
+1,4010,4010 - Ricavi vendita prodotti,Ricavi vendita prodotti,Ricavi,Revenue,True,1,10,1
+2,4020,4020 - Ricavi da servizi e assistenza,Ricavi da servizi e assistenza,Ricavi,Revenue,True,1,11,1
+3,4090,4090 - Sconti e premi a clienti,Sconti e premi a clienti,Ricavi,Revenue,True,1,12,1
+4,5010,5010 - Acquisto merci,Acquisto merci,Costo del venduto,COGS,True,-1,20,2
+5,5020,5020 - Trasporti su acquisti,Trasporti su acquisti,Costo del venduto,COGS,True,-1,21,2
+6,6010,6010 - Retribuzioni,Retribuzioni,Costo del personale,Opex,True,-1,30,3
+7,6020,6020 - Oneri sociali e TFR,Oneri sociali e TFR,Costo del personale,Opex,True,-1,31,3
+8,6110,6110 - Provvigioni agenti,Provvigioni agenti,Costi commerciali,Opex,True,-1,40,4
+9,6120,6120 - Trasporti su vendite,Trasporti su vendite,Costi commerciali,Opex,True,-1,41,4
+10,6130,"6130 - Pubblicità, fiere e digital","Pubblicità, fiere e digital",Costi commerciali,Opex,True,-1,42,4
+11,6210,6210 - Affitti e spese condominiali,Affitti e spese condominiali,Costi di struttura,Opex,False,-1,50,5
+12,6220,6220 - Utenze,Utenze,Costi di struttura,Opex,True,-1,51,5
+13,6230,6230 - Consulenze e servizi professionali,Consulenze e servizi professionali,Costi di struttura,Opex,True,-1,52,5
+14,6240,6240 - Licenze software e cloud,Licenze software e cloud,Costi di struttura,Opex,True,-1,53,5
+15,6250,6250 - Viaggi e trasferte,Viaggi e trasferte,Costi di struttura,Opex,True,-1,54,5
+16,6260,6260 - Auto aziendali (noleggi e carburante),Auto aziendali (noleggi e carburante),Costi di struttura,Opex,True,-1,55,5
+17,6290,6290 - Altri costi di gestione,Altri costi di gestione,Costi di struttura,Opex,True,-1,56,5
+18,7010,7010 - Ammortamenti,Ammortamenti,Ammortamenti,D&A,False,-1,70,6

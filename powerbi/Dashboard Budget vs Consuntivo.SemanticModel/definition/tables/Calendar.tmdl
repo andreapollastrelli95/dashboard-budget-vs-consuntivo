@@ -1,0 +1,88 @@
+table Calendar
+	lineageTag: 25d6a8ea-e28c-576d-9b23-362c9b003c12
+	dataCategory: Time
+
+	column DateKey
+		dataType: int64
+		isHidden
+		lineageTag: 7f975be8-d390-476d-95e8-0ae7e7b0da86
+		summarizeBy: none
+		sourceColumn: DateKey
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: dd/mm/yyyy
+		lineageTag: bd991b62-6390-4b70-8786-dd243e67d0ce
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		lineageTag: 62e8c179-da45-498c-bc0f-d61d2c377bbb
+		summarizeBy: none
+		sourceColumn: Year
+
+	column Quarter
+		dataType: int64
+		lineageTag: 4a21c167-9ccb-4c0f-95fa-5567cdacf8ef
+		summarizeBy: none
+		sourceColumn: Quarter
+
+	column QuarterLabel
+		dataType: string
+		lineageTag: 25f27f9a-2364-4808-9987-988b4aa611f1
+		summarizeBy: none
+		sourceColumn: QuarterLabel
+
+	column Month
+		dataType: int64
+		lineageTag: 545bc3d2-4082-4844-b656-332cfc4ddedf
+		summarizeBy: none
+		sourceColumn: Month
+
+	column MonthName
+		dataType: string
+		lineageTag: 3edddf95-3c2a-4c53-867c-35b3833bee1a
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: Month
+
+	column MonthShort
+		dataType: string
+		lineageTag: 165446bb-a592-4ab3-b5a7-2b111c3e1ba1
+		summarizeBy: none
+		sourceColumn: MonthShort
+		sortByColumn: Month
+
+	column YearMonth
+		dataType: int64
+		lineageTag: 928d52f4-8a39-4d71-a37b-a9fcab0700f9
+		summarizeBy: none
+		sourceColumn: YearMonth
+
+	column YearMonthLabel
+		dataType: string
+		lineageTag: b4c92c96-cd53-4da3-a83e-f129593988d8
+		summarizeBy: none
+		sourceColumn: YearMonthLabel
+		sortByColumn: YearMonth
+
+	column Half
+		dataType: string
+		lineageTag: 2f806c35-4524-4d96-be4c-ba031990017f
+		summarizeBy: none
+		sourceColumn: Half
+
+	partition Calendar = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Projects\dashboard-budget-vs-consuntivo\data\model\calendar.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"DateKey", Int64.Type}, {"Date", type date}, {"Year", Int64.Type}, {"Quarter", Int64.Type}, {"QuarterLabel", type text}, {"Month", Int64.Type}, {"MonthName", type text}, {"MonthShort", type text}, {"YearMonth", Int64.Type}, {"YearMonthLabel", type text}, {"Half", type text}}, "en-US")
+				in
+				    Typed
+

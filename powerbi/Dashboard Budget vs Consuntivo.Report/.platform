@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Dashboard Budget vs Consuntivo"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "31a9971e-de43-5d7f-994d-9ef5b5088a0c"
+  }
+}

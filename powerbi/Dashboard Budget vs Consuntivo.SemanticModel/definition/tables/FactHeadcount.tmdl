@@ -1,0 +1,40 @@
+table FactHeadcount
+	lineageTag: 0da2f1f7-41c8-508a-90d2-9a5b48d62d1a
+
+	column DateKey
+		dataType: int64
+		isHidden
+		lineageTag: 64ec8ff5-38f6-4b57-9876-3fc30de7ae7c
+		summarizeBy: none
+		sourceColumn: DateKey
+
+	column CostCenterKey
+		dataType: int64
+		isHidden
+		lineageTag: 6f8be8e7-10fe-43f9-b9e7-13a917972d49
+		summarizeBy: none
+		sourceColumn: CostCenterKey
+
+	column ScenarioKey
+		dataType: int64
+		isHidden
+		lineageTag: 777b0066-2b4d-4138-824d-005d49ee8251
+		summarizeBy: none
+		sourceColumn: ScenarioKey
+
+	column FTE
+		dataType: int64
+		lineageTag: fee996ad-1261-40f1-a56f-2c2947d1b1ab
+		summarizeBy: none
+		sourceColumn: FTE
+
+	partition FactHeadcount = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Projects\dashboard-budget-vs-consuntivo\data\model\fact_headcount.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"DateKey", Int64.Type}, {"CostCenterKey", Int64.Type}, {"ScenarioKey", Int64.Type}, {"FTE", Int64.Type}}, "en-US")
+				in
+				    Typed
+
