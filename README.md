@@ -57,7 +57,7 @@ Obiettivi del progetto:
 ## Struttura del repository
 
 ```
-budget-vs-actual/
+dashboard-budget-vs-consuntivo/
 ├── data/                       prima nota, budget/forecast, organico, anagrafiche
 ├── python/generate_data.py     generazione del dataset (budget costruito dal consuntivo dell'anno prima)
 ├── sql/
@@ -201,6 +201,6 @@ Le immagini sono i mockup delle pagine, costruiti con i dati del progetto. Il de
 
 ---
 
-Andrea Pollastrelli · [Portfolio](https://andreapollastrelli95.github.io/)
+Andrea Pollastrelli · [LinkedIn](https://www.linkedin.com/in/andrea-pollastrelli-930958157) · [Portfolio](https://andreapollastrelli95.github.io/)
 
 Dati interamente simulati: aziende e persone sono di fantasia.

@@ -8,7 +8,7 @@ USE BudgetControl;
 GO
 SET NOCOUNT ON;
 
-DECLARE @DataPath NVARCHAR(400) = N'C:\Projects\budget-vs-actual\data\';   -- <-- modificare
+DECLARE @DataPath NVARCHAR(400) = N'C:\Projects\dashboard-budget-vs-consuntivo\data\';   -- <-- modificare
 DECLARE @sql NVARCHAR(MAX);
 
 DECLARE @files TABLE (TableName SYSNAME, FileName NVARCHAR(200));
