@@ -1,0 +1,351 @@
+// =============================================================================
+//  Misure DAX - Budget vs Consuntivo
+//  Tabella misure: _Measures (cartelle: Base, Ricavi e costi, Scostamenti,
+//  Margini, Centri di costo, Organico, Forecast, Commenti, UI)
+//
+//  Convenzioni:
+//   - Amount in segno naturale (costi positivi, sconti a clienti negativi)
+//   - SignedAmount con segno da conto economico (ricavi +, costi -)
+//   - FactPlan contiene Budget e Forecast a livello mese (DateKey = giorno 1):
+//     i confronti hanno senso a livello mese / trimestre / anno, non giorno.
+//   - "Favorevole" = migliora il risultato: per i ricavi actual > budget,
+//     per i costi actual < budget. Tutte le variance "Fav" seguono questa regola.
+// =============================================================================
+
+
+// ------------------------------------------------------------------ 01 Base
+
+Actual =
+SUM ( FactActual[Amount] )
+
+Budget =
+CALCULATE ( SUM ( FactPlan[Amount] ), Scenario[ScenarioName] = "Budget" )
+
+Forecast =
+CALCULATE ( SUM ( FactPlan[Amount] ), Scenario[ScenarioName] = "Forecast" )
+
+Actual Signed =
+SUM ( FactActual[SignedAmount] )
+
+Budget Signed =
+CALCULATE ( SUM ( FactPlan[SignedAmount] ), Scenario[ScenarioName] = "Budget" )
+
+Forecast Signed =
+CALCULATE ( SUM ( FactPlan[SignedAmount] ), Scenario[ScenarioName] = "Forecast" )
+
+Last Actual DateKey =
+CALCULATE ( MAX ( FactActual[DateKey] ), REMOVEFILTERS () )
+// Usata per limitare il budget ai mesi gia' chiusi nei confronti YTD.
+
+
+// -------------------------------------------------------- 02 Ricavi e costi
+
+Actual Revenue =
+CALCULATE ( [Actual], Account[AccountType] = "Revenue" )
+// Ricavi netti: prodotti + servizi - sconti e premi a clienti.
+
+Budget Revenue =
+CALCULATE ( [Budget], Account[AccountType] = "Revenue" )
+
+Forecast Revenue =
+CALCULATE ( [Forecast], Account[AccountType] = "Revenue" )
+
+Actual Cost =
+CALCULATE ( [Actual], Account[PLSign] = -1 )
+// Tutti i costi: costo del venduto, opex e ammortamenti.
+
+Budget Cost =
+CALCULATE ( [Budget], Account[PLSign] = -1 )
+
+Actual Opex =
+CALCULATE ( [Actual], Account[AccountType] = "Opex" )
+
+Budget Opex =
+CALCULATE ( [Budget], Account[AccountType] = "Opex" )
+
+Actual Revenue PY =
+CALCULATE ( [Actual Revenue], SAMEPERIODLASTYEAR ( 'Calendar'[Date] ) )
+
+
+// ---------------------------------------------------------- 03 Scostamenti
+
+Variance € =
+[Actual] - [Budget]
+// Differenza "aritmetica". Da sola non dice se e' un bene o un male:
+// +100k sui ricavi e' positivo, +100k sui costi e' negativo.
+
+Variance % =
+DIVIDE ( [Variance €], ABS ( [Budget] ) )
+
+Variance Fav € =
+SUMX (
+    VALUES ( Account[PLSign] ),
+    ( [Actual] - [Budget] ) * Account[PLSign]
+)
+// Impatto sul risultato: positivo = favorevole. SUMX sul segno perche' a livello
+// di totale (ricavi + costi insieme) il segno va applicato gruppo per gruppo.
+
+Variance Fav % =
+DIVIDE ( [Variance Fav €], ABS ( [Budget Signed] ) )
+
+Revenue Variance € =
+[Actual Revenue] - [Budget Revenue]
+
+Revenue Variance % =
+DIVIDE ( [Revenue Variance €], [Budget Revenue] )
+
+Cost Variance € =
+[Actual Cost] - [Budget Cost]
+
+Cost Variance % =
+DIVIDE ( [Cost Variance €], [Budget Cost] )
+
+Variance vs Forecast € =
+SUMX ( VALUES ( Account[PLSign] ), ( [Actual] - [Forecast] ) * Account[PLSign] )
+
+Variance Status =
+VAR _v = [Variance Fav %]
+RETURN
+    SWITCH (
+        TRUE (),
+        ISBLANK ( [Budget] ) && NOT ISBLANK ( [Actual] ), "Non a budget",
+        _v >= 0, "Favorevole",
+        _v >= -0.05, "Attenzione",
+        "Sfavorevole"
+    )
+
+Variance Color =
+VAR _v = [Variance Fav %]
+RETURN
+    SWITCH (
+        TRUE (),
+        ISBLANK ( _v ), "#8A94A6",
+        _v >= 0, "#1E8E5A",
+        _v >= -0.05, "#E0A100",
+        "#C0392B"
+    )
+// Formattazione condizionale di colonne e icone: verde favorevole,
+// giallo fino a -5%, rosso oltre.
+
+
+// -------------------------------------------------------------- 04 Margini
+
+Actual Gross Margin =
+CALCULATE ( [Actual Signed], Account[AccountType] IN { "Revenue", "COGS" } )
+
+Budget Gross Margin =
+CALCULATE ( [Budget Signed], Account[AccountType] IN { "Revenue", "COGS" } )
+
+Actual Gross Margin % =
+DIVIDE ( [Actual Gross Margin], [Actual Revenue] )
+
+Budget Gross Margin % =
+DIVIDE ( [Budget Gross Margin], [Budget Revenue] )
+
+Gross Margin % Delta pp =
+( [Actual Gross Margin %] - [Budget Gross Margin %] ) * 100
+
+Actual EBITDA =
+CALCULATE ( [Actual Signed], Account[AccountType] <> "D&A" )
+
+Budget EBITDA =
+CALCULATE ( [Budget Signed], Account[AccountType] <> "D&A" )
+
+Actual Operating Margin =
+[Actual Signed]
+// Risultato operativo (EBIT): somma con segno di tutti i conti economici del modello.
+
+Budget Operating Margin =
+[Budget Signed]
+
+Forecast Operating Margin =
+[Forecast Signed]
+
+Operating Margin Variance € =
+[Actual Operating Margin] - [Budget Operating Margin]
+
+Operating Margin Variance % =
+DIVIDE ( [Operating Margin Variance €], ABS ( [Budget Operating Margin] ) )
+
+Actual Operating Margin % =
+DIVIDE ( [Actual Operating Margin], [Actual Revenue] )
+
+Budget Operating Margin % =
+DIVIDE ( [Budget Operating Margin], [Budget Revenue] )
+
+Operating Margin YTD Actual =
+CALCULATE ( [Actual Operating Margin], DATESYTD ( 'Calendar'[Date] ) )
+
+Operating Margin YTD Budget =
+VAR _LastClosed = [Last Actual DateKey]
+RETURN
+    CALCULATE (
+        [Budget Operating Margin],
+        DATESYTD ( 'Calendar'[Date] ),
+        'Calendar'[DateKey] <= _LastClosed
+    )
+// Budget progressivo solo fino all'ultimo mese con consuntivo: confronto omogeneo.
+
+
+// ------------------------------------------------------- 05 Centri di costo
+
+Cost Center Result Actual =
+[Actual Signed]
+// Per un centro di ricavo e' il contributo (ricavi - costi diretti del centro);
+// per un centro di costo e' un numero negativo = costi del centro.
+
+Cost Center Result Budget =
+[Budget Signed]
+
+Cost Center Performance € =
+[Variance Fav €]
+
+Cost Center Performance % =
+DIVIDE ( [Variance Fav €], ABS ( [Cost Center Result Budget] ) )
+
+Budget Consumed % =
+DIVIDE ( [Actual Cost], [Budget Cost] )
+// Quanta parte del budget di costo e' stata spesa (a fine anno > 100% = sforamento).
+
+Budget Consumed Full Year % =
+DIVIDE (
+    [Actual Cost],
+    CALCULATE ( [Budget Cost], DATESYTD ( ENDOFYEAR ( 'Calendar'[Date] ) ) )
+)
+
+Controllable Variance € =
+CALCULATE ( [Variance Fav €], Account[IsControllable] = TRUE () )
+// Solo le voci su cui il responsabile ha leva (esclusi affitti e ammortamenti):
+// e' la misura giusta per valutare il manager, non il centro.
+
+Cost Center Rank =
+IF (
+    HASONEVALUE ( CostCenter[CostCenterName] ),
+    RANKX ( ALLSELECTED ( CostCenter[CostCenterName] ), [Cost Center Performance %], , ASC, DENSE )
+)
+// 1 = centro con la performance peggiore (da guardare per primo).
+
+Cost Centers Over Budget =
+COUNTROWS (
+    FILTER ( VALUES ( CostCenter[CostCenterName] ), [Cost Center Performance %] < -0.05 )
+)
+
+
+// --------------------------------------------------------------- 06 Organico
+
+FTE Actual =
+AVERAGEX (
+    VALUES ( 'Calendar'[YearMonth] ),
+    CALCULATE ( SUM ( FactHeadcount[FTE] ), Scenario[ScenarioName] = "Actual" )
+)
+// Media mensile degli FTE nel periodo (l'organico non si somma nel tempo).
+
+FTE Budget =
+AVERAGEX (
+    VALUES ( 'Calendar'[YearMonth] ),
+    CALCULATE ( SUM ( FactHeadcount[FTE] ), Scenario[ScenarioName] = "Budget" )
+)
+
+FTE Variance =
+[FTE Actual] - [FTE Budget]
+
+Personnel Cost Actual =
+CALCULATE ( [Actual], Account[PLGroup] = "Costo del personale" )
+
+Personnel Cost Budget =
+CALCULATE ( [Budget], Account[PLGroup] = "Costo del personale" )
+
+Cost per FTE Actual =
+DIVIDE ( [Personnel Cost Actual], [FTE Actual] ) * DIVIDE ( 12, DISTINCTCOUNT ( 'Calendar'[YearMonth] ) )
+// Costo annualizzato per FTE.
+
+
+// --------------------------------------------------------------- 07 Forecast
+
+Full Year Budget =
+CALCULATE ( [Budget Signed], DATESYTD ( ENDOFYEAR ( 'Calendar'[Date] ) ) )
+
+Full Year Forecast =
+CALCULATE ( [Forecast Signed], DATESYTD ( ENDOFYEAR ( 'Calendar'[Date] ) ) )
+
+Full Year Landing vs Budget € =
+[Full Year Forecast] - [Full Year Budget]
+
+Forecast Accuracy % =
+1 - ABS ( DIVIDE ( [Actual Signed] - [Forecast Signed], [Forecast Signed] ) )
+// Da leggere sul secondo semestre (lug-dic), dove il forecast e' una stima.
+
+Actual + Forecast Remaining =
+VAR _LastClosed = [Last Actual DateKey]
+RETURN
+    CALCULATE ( [Actual Signed], 'Calendar'[DateKey] <= _LastClosed )
+        + CALCULATE ( [Forecast Signed], 'Calendar'[DateKey] > _LastClosed )
+// Proiezione di chiusura: consuntivo dei mesi chiusi + forecast dei mesi aperti.
+
+
+// --------------------------------------------------------------- 08 Commenti
+
+Management Comment Summary =
+VAR _Y = MAX ( 'Calendar'[Year] )
+VAR _M = MAX ( 'Calendar'[Month] )
+RETURN
+    CALCULATE (
+        CONCATENATEX (
+            ManagementComment,
+            ManagementComment[CommentText],
+            UNICHAR ( 10 ) & UNICHAR ( 10 ),
+            ManagementComment[Priority], ASC
+        ),
+        ManagementComment[Year] = _Y,
+        ManagementComment[Month] = _M,
+        ManagementComment[CommentType] IN { "Sintesi", "Scostamento negativo", "Scostamento positivo", "Forecast" }
+    )
+// Commenti generati in SQL (procedura rpt.usp_GenerateManagementComments) per il mese
+// selezionato, in ordine di priorita'. ManagementComment e' una tabella scollegata.
+
+Management Comment Cost Center =
+VAR _Y = MAX ( 'Calendar'[Year] )
+VAR _M = MAX ( 'Calendar'[Month] )
+VAR _CC = SELECTEDVALUE ( CostCenter[CostCenterKey] )
+RETURN
+    CALCULATE (
+        CONCATENATEX ( ManagementComment, ManagementComment[CommentText], UNICHAR ( 10 ) ),
+        ManagementComment[Year] = _Y,
+        ManagementComment[Month] = _M,
+        ManagementComment[CostCenterKey] = _CC
+    )
+
+Dynamic Commentary =
+VAR _Rev   = [Actual Revenue]
+VAR _RevV  = [Revenue Variance %]
+VAR _OM    = [Actual Operating Margin]
+VAR _OMB   = [Budget Operating Margin]
+VAR _GMpp  = [Gross Margin % Delta pp]
+VAR _Worst =
+    TOPN ( 1, VALUES ( CostCenter[CostCenterName] ), [Variance Fav €], ASC )
+VAR _WorstName = MAXX ( _Worst, CostCenter[CostCenterName] )
+VAR _WorstVar  = MINX ( _Worst, [Variance Fav €] )
+VAR _Best =
+    TOPN ( 1, VALUES ( CostCenter[CostCenterName] ), [Variance Fav €], DESC )
+VAR _BestName = MAXX ( _Best, CostCenter[CostCenterName] )
+VAR _BestVar  = MAXX ( _Best, [Variance Fav €] )
+RETURN
+    "Ricavi € " & FORMAT ( _Rev, "#,0" ) & " ("
+        & FORMAT ( _RevV, "+0.0%;-0.0%" ) & " vs budget), margine lordo "
+        & FORMAT ( _GMpp, "+0.0;-0.0" ) & " pp. "
+        & "Risultato operativo € " & FORMAT ( _OM, "#,0" ) & " contro € " & FORMAT ( _OMB, "#,0" )
+        & " a budget. "
+        & "Scostamento peggiore: " & _WorstName & " (€ " & FORMAT ( _WorstVar, "#,0" ) & "); "
+        & "migliore: " & _BestName & " (€ " & FORMAT ( _BestVar, "+#,0" ) & ")."
+// Versione "live" del commento calcolata in DAX: si aggiorna con qualsiasi filtro
+// (periodo, area, centro), mentre quella SQL e' fissa per mese.
+
+
+// --------------------------------------------------------------------- 09 UI
+
+Selected Period =
+"Gen - " & FORMAT ( MAX ( 'Calendar'[Date] ), "mmm yyyy" )
+
+Variance Arrow =
+VAR _v = [Variance Fav €]
+RETURN IF ( ISBLANK ( _v ), BLANK (), IF ( _v >= 0, "▲", "▼" ) )
